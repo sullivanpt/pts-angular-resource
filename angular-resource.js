@@ -1,5 +1,6 @@
 /**
- * @license AngularJS v1.0.6
+ * @license AngularJS v1.0.6 + patches 
+ * (id as v1.0.7 because bower semver is broken)
  * (c) 2010-2012 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -298,6 +299,7 @@ angular.module('ngResource', ['ng']).
       url: function(params) {
         var self = this,
             url = this.template,
+            uri = url.split('?',1)[0],
             val,
             encodedVal;
 
@@ -305,7 +307,7 @@ angular.module('ngResource', ['ng']).
         forEach(this.urlParams, function(_, urlParam){
           val = params.hasOwnProperty(urlParam) ? params[urlParam] : self.defaults[urlParam];
           if (angular.isDefined(val) && val !== null) {
-            encodedVal = encodeUriSegment(val);
+            encodedVal = (uri.search(":" + urlParam) !== -1) ? encodeUriSegment(val) : encodeUriQuery(val);
             url = url.replace(new RegExp(":" + urlParam + "(\\W)", "g"), encodedVal + "$1");
           } else {
             url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W)", "g"), function(match,
