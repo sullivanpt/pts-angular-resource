@@ -1,5 +1,5 @@
 /**
- * @license AngularJS v1.1.5
+ * @license AngularJS v1.1.5 + url param patch
  * (c) 2010-2012 Google, Inc. http://angularjs.org
  * License: MIT
  */
@@ -340,6 +340,7 @@ angular.module('ngResource', ['ng']).
       setUrlParams: function(config, params, actionUrl) {
         var self = this,
             url = actionUrl || self.template,
+            uri = url.split('?',1)[0],
             val,
             encodedVal;
 
@@ -355,7 +356,7 @@ angular.module('ngResource', ['ng']).
         forEach(self.urlParams, function(_, urlParam){
           val = params.hasOwnProperty(urlParam) ? params[urlParam] : self.defaults[urlParam];
           if (angular.isDefined(val) && val !== null) {
-            encodedVal = encodeUriSegment(val);
+            encodedVal = (uri.search(":" + urlParam) !== -1) ? encodeUriSegment(val) : encodeUriQuery(val);
             url = url.replace(new RegExp(":" + urlParam + "(\\W|$)", "g"), encodedVal + "$1");
           } else {
             url = url.replace(new RegExp("(\/?):" + urlParam + "(\\W|$)", "g"), function(match,
